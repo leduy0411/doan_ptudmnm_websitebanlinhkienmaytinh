@@ -171,21 +171,23 @@ function getProduct($productModel, $data) {
 
 function createProduct($productModel, $data) {
     // Validate required fields
-    $required = ['name', 'category_id', 'price'];
+    $required = ['name', 'category_id', 'price', 'sku'];
     foreach ($required as $field) {
         if (empty($data[$field])) {
-            echo json_encode(['success' => false, 'message' => "Trường $field là bắt buộc"]);
+            echo json_encode(['success' => false, 'message' => "Trường $field là bắt buộc và không được để trống"]);
             return;
         }
     }
-    
-    // Check SKU uniqueness
-    if (!empty($data['sku'])) {
-        $existing = $productModel->findBySku($data['sku']);
-        if ($existing) {
-            echo json_encode(['success' => false, 'message' => 'Mã SKU đã tồn tại']);
-            return;
-        }
+    // Check SKU uniqueness (không cho phép trùng hoặc rỗng)
+    $sku = trim($data['sku'] ?? '');
+    if ($sku === '') {
+        echo json_encode(['success' => false, 'message' => 'Mã SKU là bắt buộc và không được để trống']);
+        return;
+    }
+    $existing = $productModel->findBySku($sku);
+    if ($existing) {
+        echo json_encode(['success' => false, 'message' => 'Mã SKU đã tồn tại']);
+        return;
     }
     
     $productData = [
@@ -253,6 +255,11 @@ function updateProduct($productModel, $data) {
         return;
     }
     
+    // Bắt buộc nhập SKU khi cập nhật
+    if (empty($data['sku'])) {
+        echo json_encode(['success' => false, 'message' => 'Mã SKU là bắt buộc và không được để trống']);
+        return;
+    }
     // Check SKU uniqueness if changed
     if (!empty($data['sku']) && $data['sku'] !== $product['sku']) {
         $existing = $productModel->findBySku($data['sku']);

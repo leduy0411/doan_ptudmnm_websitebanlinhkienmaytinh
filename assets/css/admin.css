@@ -797,7 +797,8 @@
     border: 1px solid #e2e8f0;
     color: #64748b;
     font-size: 14px;
-    transition: all 0.3s ease;
+    /* Remove any transition or animation */
+    transition: none;
 }
 
 .admin-pagination .page-link:hover,
@@ -805,6 +806,13 @@
     background: var(--admin-primary);
     border-color: var(--admin-primary);
     color: #fff;
+}
+
+/* Ensure all pagination items are always visible */
+.admin-pagination .page-item {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 /* ========== Empty State ========== */

@@ -25,8 +25,12 @@ if (!$userId || !in_array($userRole, ['admin', 'employee'])) {
     exit;
 }
 
+// Handle both JSON body and FormData
 $input = json_decode(file_get_contents('php://input'), true);
-$action = $input['action'] ?? $_GET['action'] ?? '';
+if (empty($input)) {
+    $input = $_POST;
+}
+$action = $input['action'] ?? $_GET['action'] ?? $_POST['action'] ?? '';
 
 $conversationModel = new Conversation();
 
@@ -59,21 +63,22 @@ switch ($action) {
         echo json_encode(['success' => false, 'message' => 'Invalid action']);
 }
 
-function listConversations($conversationModel) {
-    $page = (int)($_GET['page'] ?? 1);
-    $limit = (int)($_GET['limit'] ?? 20);
-    
+function listConversations($conversationModel)
+{
+    $page = (int) ($_GET['page'] ?? 1);
+    $limit = (int) ($_GET['limit'] ?? 20);
+
     $filters = [];
-    
+
     if (!empty($_GET['status'])) {
         $filters['status'] = $_GET['status'];
     }
     if (isset($_GET['assigned'])) {
         $filters['assigned'] = $_GET['assigned'] === '1';
     }
-    
+
     $result = $conversationModel->getAll($page, $limit, $filters);
-    
+
     echo json_encode([
         'success' => true,
         'data' => $result['data'],
@@ -86,20 +91,21 @@ function listConversations($conversationModel) {
     ]);
 }
 
-function myConversations($conversationModel) {
-    $page = (int)($_GET['page'] ?? 1);
-    $limit = (int)($_GET['limit'] ?? 20);
-    
+function myConversations($conversationModel)
+{
+    $page = (int) ($_GET['page'] ?? 1);
+    $limit = (int) ($_GET['limit'] ?? 20);
+
     $filters = [
         'assigned_to' => $_SESSION['user_id']
     ];
-    
+
     if (!empty($_GET['status'])) {
         $filters['status'] = $_GET['status'];
     }
-    
+
     $result = $conversationModel->getAll($page, $limit, $filters);
-    
+
     echo json_encode([
         'success' => true,
         'data' => $result['data'],
@@ -112,29 +118,30 @@ function myConversations($conversationModel) {
     ]);
 }
 
-function getMessages($conversationModel) {
+function getMessages($conversationModel)
+{
     $conversationId = $_GET['conversation_id'] ?? null;
-    
+
     if (!$conversationId) {
         echo json_encode(['success' => false, 'message' => 'Conversation ID required']);
         return;
     }
-    
-    $conversation = $conversationModel->findById((int)$conversationId);
-    
+
+    $conversation = $conversationModel->findById((int) $conversationId);
+
     if (!$conversation) {
         echo json_encode(['success' => false, 'message' => 'Cuộc trò chuyện không tồn tại']);
         return;
     }
-    
-    $page = (int)($_GET['page'] ?? 1);
-    $limit = (int)($_GET['limit'] ?? 50);
-    
+
+    $page = (int) ($_GET['page'] ?? 1);
+    $limit = (int) ($_GET['limit'] ?? 50);
+
     $messages = $conversationModel->getMessages($conversation['id'], $page, $limit);
-    
+
     // Mark as read by employee
     $conversationModel->markAsRead($conversation['id'], false);
-    
+
     echo json_encode([
         'success' => true,
         'data' => [
@@ -144,31 +151,35 @@ function getMessages($conversationModel) {
     ]);
 }
 
-function sendMessage($conversationModel, $data) {
-    if (empty($data['conversation_id']) || empty($data['message'])) {
+function sendMessage($conversationModel, $data)
+{
+    $conversationId = $data['conversation_id'] ?? null;
+    $messageContent = $data['message'] ?? $data['content'] ?? '';
+
+    if (empty($conversationId) || empty($messageContent)) {
         echo json_encode(['success' => false, 'message' => 'Conversation ID and message required']);
         return;
     }
-    
-    $conversation = $conversationModel->findById((int)$data['conversation_id']);
-    
+
+    $conversation = $conversationModel->findById((int) $conversationId);
+
     if (!$conversation) {
         echo json_encode(['success' => false, 'message' => 'Cuộc trò chuyện không tồn tại']);
         return;
     }
-    
+
     // Auto-assign if not assigned
     if (!$conversation['assigned_to']) {
         $conversationModel->assignTo($conversation['id'], $_SESSION['user_id']);
     }
-    
+
     $message = $conversationModel->sendMessage([
         'conversation_id' => $conversation['id'],
         'sender_id' => $_SESSION['user_id'],
         'sender_type' => 'employee',
-        'content' => $data['message']
+        'content' => $messageContent
     ]);
-    
+
     if ($message) {
         echo json_encode([
             'success' => true,
@@ -180,71 +191,75 @@ function sendMessage($conversationModel, $data) {
     }
 }
 
-function assignConversation($conversationModel, $data) {
+function assignConversation($conversationModel, $data)
+{
     if (empty($data['conversation_id'])) {
         echo json_encode(['success' => false, 'message' => 'Conversation ID required']);
         return;
     }
-    
-    $conversation = $conversationModel->findById((int)$data['conversation_id']);
-    
+
+    $conversation = $conversationModel->findById((int) $data['conversation_id']);
+
     if (!$conversation) {
         echo json_encode(['success' => false, 'message' => 'Cuộc trò chuyện không tồn tại']);
         return;
     }
-    
+
     $employeeId = $data['employee_id'] ?? $_SESSION['user_id'];
-    
-    $conversationModel->assign($conversation['id'], (int)$employeeId);
-    
+
+    $conversationModel->assign($conversation['id'], (int) $employeeId);
+
     echo json_encode([
         'success' => true,
         'message' => 'Đã nhận cuộc trò chuyện'
     ]);
 }
 
-function closeConversation($conversationModel, $data) {
+function closeConversation($conversationModel, $data)
+{
     if (empty($data['conversation_id'])) {
         echo json_encode(['success' => false, 'message' => 'Conversation ID required']);
         return;
     }
-    
-    $conversation = $conversationModel->findById((int)$data['conversation_id']);
-    
+
+    $conversation = $conversationModel->findById((int) $data['conversation_id']);
+
     if (!$conversation) {
         echo json_encode(['success' => false, 'message' => 'Cuộc trò chuyện không tồn tại']);
         return;
     }
-    
+
     $conversationModel->close($conversation['id']);
-    
+
     echo json_encode([
         'success' => true,
         'message' => 'Đã đóng cuộc trò chuyện'
     ]);
 }
 
-function markAsRead($conversationModel, $data) {
+function markAsRead($conversationModel, $data)
+{
     if (empty($data['conversation_id'])) {
         echo json_encode(['success' => false, 'message' => 'Conversation ID required']);
         return;
     }
-    
-    $conversationModel->markAsRead((int)$data['conversation_id'], false);
-    
+
+    $conversationModel->markAsRead((int) $data['conversation_id'], false);
+
     echo json_encode([
         'success' => true,
         'message' => 'Đã đánh dấu đã đọc'
     ]);
 }
 
-function getStats($conversationModel) {
+function getStats($conversationModel)
+{
     $db = getDB();
-    
+
     // Unassigned conversations
     $stmt = $db->query("SELECT COUNT(*) FROM conversations WHERE assigned_to IS NULL AND status = 'open'");
     $unassigned = $stmt->fetchColumn();
-    
+
     // My stats
     $stmt = $db->prepare("
         SELECT 
@@ -256,7 +271,7 @@ function getStats($conversationModel) {
     ");
     $stmt->execute([$_SESSION['user_id']]);
     $myStats = $stmt->fetch();
-    
+
     // Unread messages
     $stmt = $db->prepare("
         SELECT COUNT(*) FROM messages m
@@ -265,7 +280,7 @@ function getStats($conversationModel) {
     ");
     $stmt->execute([$_SESSION['user_id']]);
     $unreadMessages = $stmt->fetchColumn();
-    
+
     echo json_encode([
         'success' => true,
         'data' => [

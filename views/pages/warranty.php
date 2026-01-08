@@ -138,33 +138,6 @@ include __DIR__ . '/../layouts/header.php';
                     </p>
                 </div>
             </div>
-            
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-4">
-                    <h4 class="fw-bold text-primary mb-3">
-                        <i class="fas fa-map-marker-alt me-2"></i>6. Địa điểm bảo hành
-                    </h4>
-                    <p class="text-muted">
-                        Quý khách có thể mang sản phẩm đến bất kỳ showroom nào của TechShop trên toàn quốc 
-                        hoặc gửi qua đường bưu điện về địa chỉ:
-                    </p>
-                    <div class="bg-light p-3 rounded">
-                        <strong>Trung tâm Bảo hành TechShop</strong><br>
-                        123 Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh<br>
-                        Hotline: <a href="tel:1900xxxx">1900 xxxx</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card border-0 bg-primary text-white">
-                <div class="card-body p-4 text-center">
-                    <h4 class="fw-bold mb-3">Cần hỗ trợ bảo hành?</h4>
-                    <p class="mb-3">Liên hệ với chúng tôi để được tư vấn và hỗ trợ nhanh nhất</p>
-                    <a href="/contact" class="btn btn-light btn-lg">
-                        <i class="fas fa-phone-alt me-2"></i>Liên hệ ngay
-                    </a>
-                </div>
-            </div>
         </div>
     </div>
 </div>

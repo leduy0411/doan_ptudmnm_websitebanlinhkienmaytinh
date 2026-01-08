@@ -311,36 +311,14 @@ include __DIR__ . '/../layouts/header.php';
                                     </a>
                                 </li>
                                 
-                                <?php
-                                $startPage = max(1, $page - 2);
-                                $endPage = min($totalPages, $page + 2);
-                                
-                                if ($startPage > 1): ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="<?= buildPaginationUrl(1) ?>">1</a>
-                                    </li>
-                                    <?php if ($startPage > 2): ?>
-                                        <li class="page-item disabled"><span class="page-link">...</span></li>
-                                    <?php endif; ?>
-                                <?php endif; ?>
-                                
-                                <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                                     <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-                                        <a class="page-link" href="<?= buildPaginationUrl($i) ?>"><?= $i ?></a>
+                                        <a class="page-link custom-page-link" href="<?= buildPaginationUrl($i) ?>"><?= $i ?></a>
                                     </li>
                                 <?php endfor; ?>
                                 
-                                <?php if ($endPage < $totalPages): ?>
-                                    <?php if ($endPage < $totalPages - 1): ?>
-                                        <li class="page-item disabled"><span class="page-link">...</span></li>
-                                    <?php endif; ?>
-                                    <li class="page-item">
-                                        <a class="page-link" href="<?= buildPaginationUrl($totalPages) ?>"><?= $totalPages ?></a>
-                                    </li>
-                                <?php endif; ?>
-                                
                                 <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
-                                    <a class="page-link" href="<?= buildPaginationUrl($page + 1) ?>">
+                                    <a class="page-link custom-page-link" href="<?= buildPaginationUrl($page + 1) ?>">
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>
@@ -362,380 +340,41 @@ function buildPaginationUrl($page) {
 ?>
 
 <style>
-/* Filter Sidebar */
-.filter-sidebar {
-    position: sticky;
-    top: 100px;
-}
-
-.filter-card {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-    overflow: hidden;
-}
-
-.filter-title {
-    font-size: 15px;
-    font-weight: 600;
-    padding: 15px 20px;
-    margin: 0;
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.filter-title i {
-    color: var(--primary-color);
-}
-
-.filter-body {
-    padding: 15px 20px;
-}
-
-.category-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.category-list li {
-    margin-bottom: 8px;
-}
-
-.category-list li a {
-    color: #555;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    border-radius: 8px;
-    transition: all 0.3s;
-}
-
-.category-list li a:hover,
-.category-list li.active a {
-    background: var(--primary-color);
-    color: #fff;
-}
-
-.category-list li a .count {
-    font-size: 12px;
-    opacity: 0.7;
-}
-
-.sub-category-list {
-    list-style: none;
-    padding: 5px 0 0 20px;
-    margin: 0;
-}
-
-.sub-category-list li a {
-    font-size: 13px;
-    padding: 6px 12px;
-}
-
-.price-range {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.price-range input {
-    font-size: 13px;
-    padding: 8px 12px;
-}
-
-.price-range span {
-    color: #999;
-}
-
-.btn-filter-apply {
-    background: #2563eb !important;
-    color: #ffffff !important;
-    border: none !important;
-    padding: 12px 20px !important;
+/* Custom Pagination Fix */
+.products-pagination .custom-page-link {
+    width: 42px !important;
+    height: 42px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     border-radius: 10px !important;
-    font-weight: 600 !important;
-    font-size: 14px !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    transition: none !important;
-    animation: none !important;
-    transform: none !important;
-    width: 100% !important;
-    cursor: pointer !important;
-}
-
-.btn-filter-apply:hover,
-.btn-filter-apply:focus,
-.btn-filter-apply:active {
-    background: #1d4ed8 !important;
-    color: #ffffff !important;
+    margin: 0 3px !important;
+    font-weight: 500 !important;
+    color: #333 !important;
+    background: #fff !important;
+    border: 1px solid #e0e0e0 !important;
     opacity: 1 !important;
     visibility: visible !important;
 }
 
-#priceFilterForm .btn-filter-apply {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    margin-top: 15px !important;
+.products-pagination .custom-page-link:hover {
+    background: #f8f9fa !important;
+    color: #2563eb !important;
+    border-color: #2563eb !important;
+    text-decoration: none !important;
 }
 
-.price-quick {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+.products-pagination .page-item.active .custom-page-link {
+    background: #2563eb !important;
+    color: #fff !important;
+    border-color: #2563eb !important;
 }
 
-.price-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-    border: 1px solid #e0e0e0;
-    background: #fff;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.price-btn:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
-
-.brand-list {
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.brand-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.rating-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    padding: 8px 10px;
-    border-radius: 8px;
-    transition: background 0.2s;
-}
-
-.rating-checkbox:hover {
-    background: #f8f9fa;
-}
-
-.rating-checkbox input[type="radio"] {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
-
-.rating-checkbox .stars {
-    display: flex;
-    gap: 2px;
-}
-
-.rating-checkbox .stars i {
-    font-size: 12px;
-}
-
-.rating-text {
-    font-size: 13px;
-    color: #666;
-}
-
-.btn-clear-filter {
-    background: #f8f9fa;
-    color: #666;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 12px;
-    font-weight: 500;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 15px;
-}
-
-.btn-clear-filter:hover {
-    background: #dc3545;
-    color: #fff;
-    border-color: #dc3545;
-}
-
-/* Active Filters */
-.active-filters {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 12px 15px;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.active-filters .filter-label {
-    font-weight: 600;
-    color: #333;
-    font-size: 14px;
-}
-
-.active-filters .filter-tag {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 20px;
-    padding: 5px 12px;
-    font-size: 13px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.active-filters .filter-tag a {
-    color: #dc3545;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-}
-
-.active-filters .filter-tag a:hover {
-    color: #a71d2a;
-}
-
-/* Toolbar */
-.products-toolbar {
-    background: #fff;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.products-title {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
-}
-
-.products-count {
-    font-size: 14px;
-    color: #666;
-    margin: 5px 0 0 0;
-}
-
-.toolbar-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.view-mode {
-    display: flex;
-    gap: 5px;
-}
-
-.view-btn {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #e0e0e0;
-    background: #fff;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.view-btn.active,
-.view-btn:hover {
-    background: var(--primary-color);
-    color: #fff;
-    border-color: var(--primary-color);
-}
-
-.sort-dropdown select {
-    border-radius: 10px;
-    padding: 10px 15px;
-    font-size: 14px;
-    border-color: #e0e0e0;
-    min-width: 180px;
-}
-
-/* Products Grid */
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-
-.products-grid.list-view {
-    grid-template-columns: 1fr;
-}
-
-/* Empty State */
-.empty-products {
-    text-align: center;
-    padding: 60px 20px;
-    background: #fff;
-    border-radius: 16px;
-}
-
-.empty-products img {
-    max-width: 200px;
-    margin-bottom: 25px;
-    opacity: 0.7;
-}
-
-.empty-products h5 {
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-.empty-products p {
-    color: #666;
-    margin-bottom: 20px;
-}
-
-/* Pagination */
-.products-pagination {
-    margin-top: 40px;
-}
-
-.products-pagination .page-link {
-    width: 42px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    margin: 0 3px;
-    font-weight: 500;
-}
-
-.products-pagination .page-item.active .page-link {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
+.products-pagination .page-item.disabled .custom-page-link {
+    opacity: 0.5 !important;
+    background: #f8f9fa !important;
+    color: #999 !important;
+    cursor: not-allowed !important;
 }
 
 /* Responsive */

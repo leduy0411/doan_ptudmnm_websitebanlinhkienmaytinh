@@ -153,21 +153,6 @@ include __DIR__ . '/../layouts/header.php';
                     </ul>
                 </div>
             </div>
-            
-            <div class="card border-0 bg-primary text-white">
-                <div class="card-body p-4 text-center">
-                    <h4 class="fw-bold mb-3">Cần đổi trả sản phẩm?</h4>
-                    <p class="mb-3">Liên hệ ngay để được hỗ trợ nhanh nhất</p>
-                    <div class="d-flex justify-content-center gap-3">
-                        <a href="tel:1900xxxx" class="btn btn-light">
-                            <i class="fas fa-phone-alt me-2"></i>1900 xxxx
-                        </a>
-                        <a href="/contact" class="btn btn-outline-light">
-                            <i class="fas fa-envelope me-2"></i>Gửi yêu cầu
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
